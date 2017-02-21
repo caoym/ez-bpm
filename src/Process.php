@@ -1,5 +1,7 @@
 <?php
 namespace EzBpm;
+use EzBpm\Utils\Verify;
+
 /**
  * Created by PhpStorm.
  * User: caoyangmin
@@ -10,6 +12,7 @@ class Process
 {
     public function connect($from, $to){
         echo "$from --> $to \r\n";
+        $this->getNode($from)->connectTo($this->getNode($to));
     }
 
     public function addReceiver($node, $eventName){
@@ -18,4 +21,13 @@ class Process
     public function addTimer($node, $second){
         return "$node.timeout($second)";
     }
+
+    private function getNode($name){
+        array_key_exists($name, $this->nodes) or Verify::fail("node $name not found");
+        return $this->nodes;
+    }
+    /**
+     * @var ProcessNode[]
+     */
+    private $nodes = [];
 }
