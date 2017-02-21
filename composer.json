@@ -1,0 +1,30 @@
+{
+    "name": "ez-bpm",
+    "description": "easy bpm.",
+    "keywords": ["bpm","bpmn","workflow"],
+    "license": "private",
+    "type": "project",
+    "require": {
+        "php": ">=5.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~5.0",
+        "mockery/mockery": "~0.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "EzBpm\\": "src/"
+        },
+        "files": [
+
+        ]
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests/"
+        ]
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+
+}
