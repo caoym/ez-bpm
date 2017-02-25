@@ -1,5 +1,5 @@
 <?php
-namespace EzBpm;
+namespace EzBpm\Builder;
 /**
  * Created by PhpStorm.
  * User: caoyangmin
@@ -34,7 +34,7 @@ class ProcessBuilderNode
      * @param $second
      * @return $this
      */
-    public function timeout($second){
+    public function timer($second){
         $this->curNode = $this->process->addTimer($this->curNode, $second);
         return $this;
     }
@@ -43,9 +43,51 @@ class ProcessBuilderNode
      * @param $event
      * @return $this
      */
-    public function received($event){
+    public function receiver($event){
         $this->curNode = $this->process->addReceiver($this->curNode, $event);
         return $this;
+    }
+
+    /**
+     * Exclusive Gateway
+     * @param string $name
+     * @param callable $elseif
+     * @param string $comment
+     */
+    public function xG($name, callable $elseif=null, $comment = ''){
+        $node = new ExclusiveGateway();
+        $node->set
+        $this->process->addGateway($name, $node);
+        $node = $this->process->getNode($this->curNode);
+        if ($node instanceof ExclusiveGateway){
+            $this->curNode = $node->addCondition($elseif, $comment);
+        }
+    }
+
+    /**
+     * Inclusive Gateway
+     * @param string $name
+     * @param callable $if
+     * @param string $comment
+     */
+    public function oG($name, callable $if=null, $comment = ''){
+
+    }
+
+    /**
+     * Parallel Gateway
+     * @param string $name
+     */
+    public function pG($name){
+
+    }
+
+    /**
+     * Event-based Gateway
+     * @param string $name
+     */
+    public function eG($name){
+
     }
 
     /**

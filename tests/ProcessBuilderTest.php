@@ -11,6 +11,8 @@ class ProcessBuilderTest extends PHPUnit_Framework_TestCase
 {
     public function testBuilder(){
         $builder = new ProcessBuilder();
-        $builder->begin()->a->b->timeout(5)->c->d->received('event')->end();
+
+        $builder->begin()->a->b->timer(5)->c->d->receiver('event')->end();
+
     }
 }

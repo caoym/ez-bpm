@@ -1,5 +1,5 @@
 <?php
-namespace EzBpm;
+namespace EzBpm\Builder;
 /**
  * Created by PhpStorm.
  * User: caoyangmin
@@ -8,8 +8,12 @@ namespace EzBpm;
  */
 class ProcessBuilder
 {
-    public function __construct(){
-        $this->process = new Process();
+    /**
+     * ProcessBuilder constructor.
+     * @param Process $process
+     */
+    public function __construct(Process $process){
+        $this->process = $process?:new Process();
     }
     /**
      * @return ProcessBuilderNode
