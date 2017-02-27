@@ -29,8 +29,8 @@ class EventBasedGateway extends Gateway
         $next->setPreHandleHook(new SerializableFunc([$this, 'eventHandleHook'], $next));
 
     }
-    public function eventHandleHook(ProcessNodeContainer $next, ){
-        $next
+    public function eventHandleHook(ProcessNodeContainer $next){
+
     }
     public function handleNext(ProcessContext $context, ProcessEngine $engine)
     {
