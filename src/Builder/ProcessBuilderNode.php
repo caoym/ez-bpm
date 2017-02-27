@@ -56,7 +56,6 @@ class ProcessBuilderNode
      */
     public function xG($name, callable $elseif=null, $comment = ''){
         $node = new ExclusiveGateway();
-        $node->set
         $this->process->addGateway($name, $node);
         $node = $this->process->getNode($this->curNode);
         if ($node instanceof ExclusiveGateway){

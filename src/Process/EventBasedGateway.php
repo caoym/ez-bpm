@@ -10,6 +10,7 @@ namespace EzBpm\Process;
 
 
 use EzBpm\Exceptions\ProcessDefineException;
+use EzBpm\Utils\SerializableFunc;
 use EzBpm\Utils\Verify;
 
 class EventBasedGateway extends Gateway
@@ -17,8 +18,19 @@ class EventBasedGateway extends Gateway
 
     public function connectTo(ProcessNodeContainer $next){
         //只允许连接事件节点
-        $next instanceof EventNode or Verify::fail(new ProcessDefineException("EventBasedGateway {$this->getName()} should always connect to event node"));
+        $next instanceof EventNode or Verify::fail(
+            new ProcessDefineException(
+                "EventBasedGateway {$this->getName()} should always connect to event node"
+            )
+        );
         parent::connectTo($next);
+
+        //set hook
+        $next->setPreHandleHook(new SerializableFunc([$this, 'eventHandleHook'], $next));
+
+    }
+    public function eventHandleHook(ProcessNodeContainer $next, ){
+        $next
     }
     public function handleNext(ProcessContext $context, ProcessEngine $engine)
     {

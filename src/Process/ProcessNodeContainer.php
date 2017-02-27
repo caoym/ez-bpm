@@ -28,14 +28,22 @@ class ProcessNodeContainer
         return true;
     }
 
-    public function didConnect(ProcessNodeContainer $from){
+    public function postConnect(ProcessNodeContainer $from){
         $this->fromNodes[] = $from;
         return true;
+    }
+
+    public function setPreHandleHook(SerializableFunc $hook){
+        $this->preHandleHooks[] = $hook;
+
+    }
+    public function setPostHandleHook(SerializableFunc $hook){
+        $this->postHandleHooks[] = $hook;
     }
     public function connectTo(ProcessNodeContainer $next){
         $next->preConnect($this);
         $this->toNodes[] = $next;
-        $next->didConnect($this);
+        $next->postConnect($this);
     }
 
 //    public function eventTo($event, self $next){
@@ -47,7 +55,7 @@ class ProcessNodeContainer
     public function exceptionTo($exception, ProcessNodeContainer $next){
         $next->preConnect($this);
         $this->exceptionTo[] = [$exception, $next];
-        $next->didConnect($this);
+        $next->postConnect($this);
     }
 
 //    public function timerTo($delay, self $next){
@@ -133,6 +141,8 @@ class ProcessNodeContainer
 
     private $name;
 
+    private $preHandleHooks = [];
+    private $postHandleHooks=[];
 
 
 }

@@ -14,11 +14,26 @@ use EzBpm\Utils\SerializableFunc;
 class ProcessEngine
 {
     public function run(){
-        while($todo = array_shift($this->queue)){
+        while(count($this->queue)){
+            $todo = $this->queue[0];
             $todo($this);
+            array_shift($this->queue);
         }
     }
     public function listen(){
+
+    }
+
+    public function startReceiver($event, ProcessNodeContainer $receiver){
+
+    }
+    public function startTimer($name, $interval, ProcessNodeContainer $receiver){
+
+    }
+    public function setPreDispatchHook($hookedNode, SerializableFunc $hook){
+
+    }
+    public function setPostDispatchHook($hookedNode, SerializableFunc $hook){
 
     }
     /**
