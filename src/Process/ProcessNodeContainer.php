@@ -29,7 +29,7 @@ class ProcessNodeContainer
     }
 
     public function postConnect(ProcessNodeContainer $from){
-        $this->fromNodes[] = $from;
+        $this->inputs[] = $from;
         return true;
     }
 
@@ -42,7 +42,7 @@ class ProcessNodeContainer
     }
     public function connectTo(ProcessNodeContainer $next){
         $next->preConnect($this);
-        $this->toNodes[] = $next;
+        $this->outputs[] = $next;
         $next->postConnect($this);
     }
 
@@ -99,7 +99,7 @@ class ProcessNodeContainer
 
     protected function handleNext(ProcessContext $context, ProcessEngine $engine){
         //call next nodes
-        foreach ($this->toNodes as $nextNode){
+        foreach ($this->outputs as $nextNode){
             $engine->pushTask(new SerializableFunc([$nextNode, 'handle'], $context));
         }
     }
@@ -118,11 +118,11 @@ class ProcessNodeContainer
      * from nodes
      * @var ProcessNodeContainer[]
      */
-    protected $fromNodes = [];
+    protected $inputs = [];
     /**
      * @var ProcessNodeContainer[]
      */
-    protected $toNodes=[];
+    protected $outputs=[];
 
 //    /**
 //     * @var ProcessNodeContainer[]

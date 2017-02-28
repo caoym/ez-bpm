@@ -26,18 +26,31 @@ class EventBasedGateway extends Gateway
         parent::connectTo($next);
 
         //set hook
-        $next->setPreHandleHook(new SerializableFunc([$this, 'eventHandleHook'], $next));
+        $next->setPreHandleHook(new SerializableFunc([$this, 'hookPostHandle'], $next));
 
     }
-    public function eventHandleHook(ProcessNodeContainer $next){
 
+    public function hookPostHandle(ProcessNodeContainer $hookedNode,
+                                   ProcessEngine $engine,
+                                   ProcessContext $context,
+                                   SerializableFunc $next
+                                    ){
+        //一旦一个事件触发, 关闭其他链路
+        $token = $context->getToken()->getParent();
+        foreach ($token->getChildren() as $child){
+            if($child !== $context->getToken()){
+                $child->disable();
+            }
+        }
+        $next();
     }
-    public function handleNext(ProcessContext $context, ProcessEngine $engine)
+
+    public function handleNext(ProcessEngine $engine, ProcessContext $context)
     {
         //call next nodes
-        foreach ($this->toNodes as $nextNode){
+        foreach ($this->outputs as $output){
             $newContext = $engine->createContext($context);
-            $engine->pushTask(new SerializableFunc([$nextNode, 'handle'], $newContext));
+            $engine->pushTask(new SerializableFunc([$output, 'handle'], $newContext));
         }
     }
 }

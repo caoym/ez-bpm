@@ -1,5 +1,11 @@
 <?php
 namespace EzBpm\Builder;
+use EzBpm\Exceptions\ProcessDefineException;
+use EzBpm\Process\Process;
+use EzBpm\Process\Receiver;
+use EzBpm\Process\Timer;
+use EzBpm\Utils\Verify;
+
 /**
  * Created by PhpStorm.
  * User: caoyangmin
@@ -31,20 +37,41 @@ class ProcessBuilderNode
     }
 
     /**
-     * @param $second
+     * @param string $name
+     * @param int $second
      * @return $this
      */
-    public function timer($second){
-        $this->curNode = $this->process->addTimer($this->curNode, $second);
+    public function timer($name, $second = null){
+        $timer = null;
+        if($this->process->hasNode($name)){
+            $timer = $this->process->getNode($name);
+            $timer instanceof Timer or Verify::fail(new ProcessDefineException("node $name exist but not a timer"));
+
+        }else{
+            $second !== null or Verify::fail(new ProcessDefineException("param 'second' is required by timer $name"));
+            $timer = $this->process->addTimer($name, $second);
+        }
+        $this->process->connect($this->curNode, $name);
+        $this->curNode = $name;
         return $this;
     }
 
     /**
-     * @param $event
+     * @param string $name
+     * @param string $event
      * @return $this
      */
-    public function receiver($event){
-        $this->curNode = $this->process->addReceiver($this->curNode, $event);
+    public function listener($name, $event = null){
+
+        if($this->process->hasNode($name)){
+            $listener = $this->process->getNode($name);
+            $listener instanceof Receiver or Verify::fail(new ProcessDefineException("param 'event' is required by listener $name"));
+
+        }else{
+            $this->process->addEventListener($name, $event);
+        }
+        $this->process->connect($this->curNode, $name);
+        $this->curNode = $name;
         return $this;
     }
 
@@ -86,7 +113,7 @@ class ProcessBuilderNode
      * @param string $name
      */
     public function eG($name){
-
+        
     }
 
     /**

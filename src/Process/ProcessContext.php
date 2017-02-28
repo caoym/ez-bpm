@@ -13,6 +13,20 @@ class ProcessContext extends \ArrayObject
 {
 
     /**
+     * @return Token
+     */
+    public function getToken()
+    {
+        return $this->token;
+    }
+    /**
+     * @param Token $token
+     */
+    public function setToken(Token $token)
+    {
+        $this->token = $token;
+    }
+    /**
      * @param ProcessNodeContainer $fromNode
      * @param \Exception $e
      * @return void
@@ -44,5 +58,10 @@ class ProcessContext extends \ArrayObject
      * @var int
      */
     private $parentId;
+
+    /**
+     * @var Token
+     */
+    private $token;
 
 }

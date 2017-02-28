@@ -40,16 +40,16 @@ class ProcessEngine
      * @param SerializableFunc $task
      * @return void
      */
-    public function pushTask(SerializableFunc $task){
+    public function pushTask(callable $task){
         $this->queue[] = $task;
     }
 
     /**
      * 延迟执行
-     * @param SerializableFunc $task
+     * @param ProcessNodeContainer $task
      * @param int $seconds
      */
-    public function delayTask(SerializableFunc $task, $seconds){
+    public function delayTask(ProcessNodeContainer $task, $seconds){
 
     }
 

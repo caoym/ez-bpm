@@ -3,22 +3,21 @@
  * Created by PhpStorm.
  * User: caoyangmin
  * Date: 2017/2/23
- * Time: 下午9:36
+ * Time: 下午9:37
  */
 
 namespace EzBpm\Process;
 
 
-class Timer extends EventNode
+class Listener extends EventNode
 {
-
-    public function __construct($nodeName, $second){
-        $this->second = $second;
+    public function __construct($nodeName, $event){
+        $this->event = $event;
         parent::__construct($nodeName, NullNode::class);
     }
 
     /**
-     * @var int
+     * @var string
      */
-    private $second;
+    private $event;
 }

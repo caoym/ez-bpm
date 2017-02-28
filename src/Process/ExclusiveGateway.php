@@ -14,22 +14,25 @@ use EzBpm\Utils\Verify;
  * Class ExclusiveGateway
  * @package EzBpm
  * 排他网关
+ *
+ * 输出时, 只选择第一个满足条件的链路输出, 若没有满足条件的输出, 抛出异常
+ * 输入时, 直接透传
  */
 class ExclusiveGateway extends Gateway
 {
 
     public function addCondition(callable $elseif, $comment)
     {
-        $next = new ProcessNodeContainer('', NullNode::class);
-        $this->outputs[] = [$elseif, $next, $comment];
+        $next = new ProcessNodeContainer($this->nodeName.'. '.count($this->conditions), NullNode::class);
+        $this->conditions[] = [$elseif, $next, $comment];
         return $next;
     }
 
     public function handle(ProcessContext $context, ProcessEngine $engine)
     {
-        foreach ($this->outputs as $output){
+        foreach ($this->conditions as $output){
             list($elseif, $next, $comment) = $output;
-            if($elseif($context)){
+            if($elseif == null || $elseif($context)){
                 $engine->pushTask(new SerializableFunc([$next, 'handle'], $context));
                 return;
             }
@@ -38,7 +41,7 @@ class ExclusiveGateway extends Gateway
     }
 
     /**
-     * @var []
+     * @var ProcessNodeContainer[]
      */
-    private $outputs=[];
+    private $conditions=[];
 }

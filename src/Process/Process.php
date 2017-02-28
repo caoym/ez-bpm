@@ -27,11 +27,13 @@ class Process
     }
 
 
-    public function addEventReceiver($node, $eventName){
-        return "$node.received($eventName)";
+    public function addEventListener($node, $eventName){
+        $listener = new Listener($node, $eventName);
+        return $listener;
     }
-    public function addTimer($node, $second){
-        return "$node.timeout($second)";
+    public function addTimer($name, $second){
+        $timer = new Timer($name, $second);
+        return $timer;
     }
 
     public function getNode($name){
