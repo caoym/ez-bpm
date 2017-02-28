@@ -1,6 +1,8 @@
 <?php
 namespace EzBpm\Builder;
 use EzBpm\Exceptions\ProcessDefineException;
+use EzBpm\Process\ExclusiveGateway;
+use EzBpm\Process\Listener;
 use EzBpm\Process\Process;
 use EzBpm\Process\Receiver;
 use EzBpm\Process\Timer;
@@ -49,9 +51,9 @@ class ProcessBuilderNode
 
         }else{
             $second !== null or Verify::fail(new ProcessDefineException("param 'second' is required by timer $name"));
-            $timer = $this->process->addTimer($name, $second);
+            $this->process->addNodeInstance(new Timer($name, $second));
+            $this->process->connect($this->curNode, $name);
         }
-        $this->process->connect($this->curNode, $name);
         $this->curNode = $name;
         return $this;
     }
@@ -65,12 +67,14 @@ class ProcessBuilderNode
 
         if($this->process->hasNode($name)){
             $listener = $this->process->getNode($name);
-            $listener instanceof Receiver or Verify::fail(new ProcessDefineException("param 'event' is required by listener $name"));
+            $listener instanceof Listener or Verify::fail(new ProcessDefineException("node $name exist but not a listener"));
 
         }else{
-            $this->process->addEventListener($name, $event);
+            $event or Verify::fail(new ProcessDefineException("param 'event' is required by listener $name"));
+            $this->process->addNodeInstance($name, new Listener($name, $event));
+            $this->process->connect($this->curNode, $name);
         }
-        $this->process->connect($this->curNode, $name);
+
         $this->curNode = $name;
         return $this;
     }
@@ -82,12 +86,18 @@ class ProcessBuilderNode
      * @param string $comment
      */
     public function xG($name, callable $elseif=null, $comment = ''){
-        $node = new ExclusiveGateway();
-        $this->process->addGateway($name, $node);
-        $node = $this->process->getNode($this->curNode);
-        if ($node instanceof ExclusiveGateway){
-            $this->curNode = $node->addCondition($elseif, $comment);
+        $node = null;
+        if($this->process->hasNode($name)){
+            $node = $this->process->getNode($name);
+            $node instanceof ExclusiveGateway or Verify::fail(new ProcessDefineException("node $name exist but not a ExclusiveGateway"));
+
+        }else{
+            $node = $this->process->addNodeInstance($name, new ExclusiveGateway());
+            $this->process->connect($this->curNode, $name);
         }
+
+        $this->curNode = $node->addCondition($elseif, $comment);
+        return $this;
     }
 
     /**
@@ -113,7 +123,7 @@ class ProcessBuilderNode
      * @param string $name
      */
     public function eG($name){
-        
+
     }
 
     /**

@@ -15,25 +15,16 @@ class Process
         $this->nodes[$name] = new Activity($name, $class);
     }
 
-    public function addGateway($name, Gateway $gateway){
+    public function addNodeInstance($name, ProcessNodeContainer $node){
         !array_key_exists($name, $this->nodes) or Verify::fail(new \InvalidArgumentException("node $name exist"));
-        $gateway->setNodeName($name);
-        $this->nodes[$name] = $gateway;
+        $node->setName($name);
+        $this->nodes[$name] = $node;
+        return $node;
     }
 
     public function connect($from, $to){
         echo "$from --> $to \r\n";
         $this->getNode($from)->connectTo($this->getNode($to));
-    }
-
-
-    public function addEventListener($node, $eventName){
-        $listener = new Listener($node, $eventName);
-        return $listener;
-    }
-    public function addTimer($name, $second){
-        $timer = new Timer($name, $second);
-        return $timer;
     }
 
     public function getNode($name){

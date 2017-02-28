@@ -110,6 +110,14 @@ class ProcessNodeContainer
         return $this->nodeName;
     }
 
+    /**
+     * @param string $nodeName
+     */
+    public function setName($nodeName)
+    {
+        $this->nodeName = $nodeName;
+    }
+
     public function getClass(){
         return $this->nodeClass;
     }
