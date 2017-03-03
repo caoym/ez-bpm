@@ -6,8 +6,7 @@
  * Time: 下午9:36
  */
 
-namespace EzBpm\Process;
-
+namespace EzBpm\Process\Nodes;
 
 class EventNode extends ProcessNodeContainer
 {

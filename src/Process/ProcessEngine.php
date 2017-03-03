@@ -9,14 +9,15 @@
 namespace EzBpm\Process;
 
 
+use EzBpm\Process\Nodes\ProcessNodeContainer;
 use EzBpm\Utils\SerializableFunc;
 
 class ProcessEngine
 {
     public function run(){
         while(count($this->queue)){
-            $todo = $this->queue[0];
-            $todo($this);
+            list($node, $context) = $this->queue[0];
+            $node->handle($context, $this);
             array_shift($this->queue);
         }
     }
@@ -27,7 +28,7 @@ class ProcessEngine
     public function startReceiver($event, ProcessNodeContainer $receiver){
 
     }
-    public function startTimer($name, $interval, ProcessNodeContainer $receiver){
+    public function startTimer($interval, ProcessNodeContainer $receiver){
 
     }
     public function setPreDispatchHook($hookedNode, SerializableFunc $hook){
@@ -36,12 +37,15 @@ class ProcessEngine
     public function setPostDispatchHook($hookedNode, SerializableFunc $hook){
 
     }
+
     /**
-     * @param SerializableFunc $task
      * @return void
      */
-    public function pushTask(callable $task){
-        $this->queue[] = $task;
+    public function pushTask(ProcessNodeContainer $node, ProcessContext $context=null){
+        if(!$context){
+            $context = $this->createContext();
+        }
+        $this->queue[] = [$node, $context];
     }
 
     /**
@@ -49,7 +53,7 @@ class ProcessEngine
      * @param ProcessNodeContainer $task
      * @param int $seconds
      */
-    public function delayTask(ProcessNodeContainer $task, $seconds){
+    public function delayTask($seconds, ProcessNodeContainer $node, ProcessContext $context=null){
 
     }
 
@@ -58,7 +62,7 @@ class ProcessEngine
      * @return ProcessContext
      */
     public function createContext(ProcessContext $context = null){
-
+        return new ProcessContext();
     }
     /**
      * 执行队列

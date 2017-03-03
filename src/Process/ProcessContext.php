@@ -9,6 +9,8 @@
 namespace EzBpm\Process;
 
 
+use EzBpm\Exceptions\ProcessRuntimeException;
+
 class ProcessContext extends \ArrayObject
 {
 
@@ -37,7 +39,7 @@ class ProcessContext extends \ArrayObject
         $this->lastException->code = $e->getCode();
         $this->lastException->message = $e->getMessage();
         $this->lastException->exception = get_class($e);
-        if ($e instanceof ProcessRuntimeException::class){
+        if ($e instanceof ProcessRuntimeException){
             $this->lastException->userData = $e->getUserData();
         }else{
             $this->lastException->userData = null;

@@ -6,7 +6,7 @@
  * Time: 下午8:47
  */
 
-namespace EzBpm\Process;
+namespace EzBpm\Process\Nodes;
 
 
 use EzBpm\Exceptions\ProcessDefineException;

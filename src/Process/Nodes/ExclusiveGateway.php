@@ -6,7 +6,7 @@
  * Time: 下午7:30
  */
 
-namespace EzBpm\Process;
+namespace EzBpm\Process\Nodes;
 use EzBpm\Utils\SerializableFunc;
 use EzBpm\Utils\Verify;
 

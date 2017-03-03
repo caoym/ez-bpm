@@ -1,5 +1,9 @@
 <?php
 namespace EzBpm\Process;
+use EzBpm\Process\Nodes\Activity;
+use EzBpm\Process\Nodes\BeginEvent;
+use EzBpm\Process\Nodes\ProcessNodeContainer;
+use EzBpm\Utils\SerializableFunc;
 use EzBpm\Utils\Verify;
 
 /**
@@ -14,7 +18,6 @@ class Process
         !array_key_exists($name, $this->nodes) or Verify::fail(new \InvalidArgumentException("node $name exist"));
         $this->nodes[$name] = new Activity($name, $class);
     }
-
     public function addNodeInstance($name, ProcessNodeContainer $node){
         !array_key_exists($name, $this->nodes) or Verify::fail(new \InvalidArgumentException("node $name exist"));
         $node->setName($name);
@@ -23,16 +26,23 @@ class Process
     }
 
     public function connect($from, $to){
-        echo "$from --> $to \r\n";
         $this->getNode($from)->connectTo($this->getNode($to));
     }
 
     public function getNode($name){
         array_key_exists($name, $this->nodes) or Verify::fail("node $name not found");
-        return $this->nodes;
+        return $this->nodes[$name];
     }
     public function hasNode($name){
         return array_key_exists($name, $this->nodes);
+    }
+    public function run(ProcessEngine $engine){
+        foreach ($this->nodes as $node){
+            if($node instanceof BeginEvent){
+                $engine->pushTask($node);
+            }
+        }
+        $engine->run();
     }
     /**
      * @var ProcessNodeContainer[]

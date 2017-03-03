@@ -6,9 +6,11 @@
  * Time: 上午12:01
  */
 
-namespace EzBpm\Process;
+namespace EzBpm\Process\Nodes;
 
 
+use EzBpm\Process\ProcessContext;
+use EzBpm\Process\ProcessEngine;
 use EzBpm\Utils\SerializableFunc;
 use EzBpm\Utils\Verify;
 
@@ -25,12 +27,11 @@ class ProcessNodeContainer
     }
 
     public function preConnect(ProcessNodeContainer $from){
-        return true;
+
     }
 
     public function postConnect(ProcessNodeContainer $from){
         $this->inputs[] = $from;
-        return true;
     }
 
     public function setPreHandleHook(SerializableFunc $hook){
@@ -92,7 +93,8 @@ class ProcessNodeContainer
         $this->handleNext($context, $engine);
 
     }
-    protected function handleInternal(ProcessNode $node, ProcessContext $context){
+
+    protected function handleInternal(ProcessNode $node, ProcessContext $context, ProcessEngine $engine){
 
         $node->handle($context);
     }
@@ -100,7 +102,7 @@ class ProcessNodeContainer
     protected function handleNext(ProcessContext $context, ProcessEngine $engine){
         //call next nodes
         foreach ($this->outputs as $nextNode){
-            $engine->pushTask(new SerializableFunc([$nextNode, 'handle'], $context));
+            $engine->pushTask($nextNode, $context);
         }
     }
     /**

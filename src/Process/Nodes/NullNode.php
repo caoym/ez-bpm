@@ -2,16 +2,22 @@
 /**
  * Created by PhpStorm.
  * User: caoyangmin
- * Date: 2017/2/22
- * Time: 下午6:31
+ * Date: 2017/2/23
+ * Time: 下午6:47
  */
 
-namespace EzBpm\Process;
+namespace EzBpm\Process\Nodes;
 
 
-interface ProcessNode
+use EzBpm\Process\ProcessContext;
+
+class NullNode implements ProcessNode
 {
-    public function handle(ProcessContext $context);
+
+    public function handle(ProcessContext $context)
+    {
+        echo '=>';
+    }
 
     /**
      * 判断是否需要对此节点进行持久化
@@ -22,5 +28,8 @@ interface ProcessNode
      * 建议幂等的(允许重试的)接口不开启, 而只对不幂等的接口开启。
      * @return bool
      */
-    public function needPersistence();
+    public function needPersistence()
+    {
+        return false;
+    }
 }

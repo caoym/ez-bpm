@@ -6,7 +6,7 @@
  * Time: 下午9:37
  */
 
-namespace EzBpm\Process;
+namespace EzBpm\Process\Nodes;
 
 
 class Listener extends EventNode

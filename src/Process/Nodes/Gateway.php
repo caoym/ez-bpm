@@ -6,7 +6,7 @@
  * Time: 下午11:53
  */
 
-namespace EzBpm\Process;
+namespace EzBpm\Process\Nodes;
 
 
 class Gateway extends ProcessNodeContainer
