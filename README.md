@@ -13,7 +13,7 @@ $builder
     ->begin
     ->activity(null, CreateOrderTask::class, '创建订单')
     ->eG('eventGetway1', '事件网关')
-    ->receiver(null, 'message.pay.{orderId}'， '等待支付')
+    ->receiver(null, 'paid'， '等待支付')
     ->activity(null, ShipTask::cass, '发货');
     ->xG('xGetway1', '排他网关')
     ->end;
