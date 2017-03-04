@@ -14,59 +14,76 @@ use EzBpm\Utils\SerializableFunc;
 
 class ProcessEngine
 {
-    public function run(){
-        while(count($this->queue)){
-            list($node, $context) = $this->queue[0];
-            $node->handle($context, $this);
+    public function __construct(Process $process)
+    {
+        $this->process = $process;
+    }
+
+    public function startNewProcess(){
+        $this->pushTask('begin', 'handle', null);
+        while (count($this->queue)) {
+            list($node, $invokeMethod, $context) = $this->queue[0];
+            $node->{$invokeMethod}($context, $this);
             array_shift($this->queue);
         }
-    }
-    public function listen(){
 
     }
 
-    public function startReceiver($event, ProcessNodeContainer $receiver){
+    public function listen()
+    {
 
     }
-    public function startTimer($interval, ProcessNodeContainer $receiver){
+
+    public function catchEvent($event,
+                               $nodeName,
+                               $invokeMethod,
+                               ProcessContext $context = null)
+    {
 
     }
-    public function setPreDispatchHook($hookedNode, SerializableFunc $hook){
 
-    }
-    public function setPostDispatchHook($hookedNode, SerializableFunc $hook){
+    public function delayTask($event,
+                              $nodeName,
+                              $invokeMethod,
+                              ProcessContext $context = null)
+    {
 
     }
 
     /**
      * @return void
      */
-    public function pushTask(ProcessNodeContainer $node, ProcessContext $context=null){
-        if(!$context){
+    public function pushTask($nodeName, $invokeMethod, ProcessContext $context = null)
+    {
+        if (!$context) {
             $context = $this->createContext();
         }
-        $this->queue[] = [$node, $context];
-    }
-
-    /**
-     * 延迟执行
-     * @param ProcessNodeContainer $task
-     * @param int $seconds
-     */
-    public function delayTask($seconds, ProcessNodeContainer $node, ProcessContext $context=null){
-
+        $this->queue[] = [$nodeName, $invokeMethod, $context];
     }
 
     /**
      * @param ProcessContext|null $context
      * @return ProcessContext
      */
-    public function createContext(ProcessContext $context = null){
+    public function createContext(ProcessContext $context = null)
+    {
         return new ProcessContext();
     }
+
     /**
      * 执行队列
-     * @var SerializableFunc[]
+     * [$event,$nodeName,$invokeMethod,ProcessContext][]
+     * @var array
      */
-    private $queue=[];
+    private $queue = [];
+
+    private $timers = [];
+
+    public $listeners = [];
+
+
+    /**
+     * @var Process
+     */
+    public $process;
 }

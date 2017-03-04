@@ -15,7 +15,7 @@ use EzBpm\Process\Traits\SingleInput;
 use EzBpm\Process\Traits\SingleOutput;
 use EzBpm\Utils\Verify;
 
-class Timer extends EventNode
+class Timer extends IntermediateEventNode
 {
 
     public function __construct($nodeName, $second){
@@ -25,7 +25,10 @@ class Timer extends EventNode
 
     public function handle(ProcessContext $context, ProcessEngine $engine){
         count($this->outputs) or Verify::fail("no output connected from timer '{$this->getName()}'");
-        $engine->delayTask($this->second, $this->outputs[0], $context);
+        $engine->delayTask($this->second, $this->outputs[0],'handleTimeout', $context);
+    }
+    public function handleTimeout(ProcessContext $context, ProcessEngine $engine){
+        parent::handle($context, $engine);
     }
 
     use SingleInput;

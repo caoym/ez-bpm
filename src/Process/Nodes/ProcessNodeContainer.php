@@ -34,12 +34,11 @@ class ProcessNodeContainer
         $this->inputs[] = $from;
     }
 
-    public function setPreHandleHook(SerializableFunc $hook){
-        $this->preHandleHooks[] = $hook;
-
+    public function setHook(SerializableFunc $hook){
+        $this->hook = $hook;
     }
-    public function setPostHandleHook(SerializableFunc $hook){
-        $this->postHandleHooks[] = $hook;
+    public function getHook(){
+        return $this->hook;
     }
     public function connectTo(ProcessNodeContainer $next){
         $next->preConnect($this);
@@ -47,27 +46,21 @@ class ProcessNodeContainer
         $next->postConnect($this);
     }
 
-//    public function eventTo($event, self $next){
-//        $next->preConnect($this);
-//        $this->eventTo[] = [$event, $next];
-//        $next->didConnect($this);
-//    }
-
     public function exceptionTo($exception, ProcessNodeContainer $next){
         $next->preConnect($this);
         $this->exceptionTo[] = [$exception, $next];
         $next->postConnect($this);
     }
 
-//    public function timerTo($delay, self $next){
-//        $next->preConnect($this);
-//        $this->timerTo[] = [$delay, $next];
-//        $next->didConnect($this);
-//    }
-
-    public function handle(ProcessContext $context, ProcessEngine $engine){
+    public function handler(ProcessContext $context, ProcessEngine $engine){
+        if($this->hook){
+            $this->hook($context, $engine, [$this, 'handleImpl']);
+        }else{
+            $this->handleImpl($context, $engine);
+        }
+    }
+    public function handleImpl(ProcessContext $context, ProcessEngine $engine){
         // init exceptionTo handler
-        $res = null;
         try{
             //call
             $node = new $this->nodeClass;
@@ -80,7 +73,7 @@ class ProcessNodeContainer
                 list($key, $nextNode) = $to;
                 if ($e instanceof $key){
                     $handled = true;
-                    $engine->pushTask(new SerializableFunc([$nextNode, 'handle'], $context));
+                    $engine->pushTask($nextNode->getName(), 'handle', $context);
                 }
             }
             if(!$handled){
@@ -89,7 +82,6 @@ class ProcessNodeContainer
                 return;
             }
         }
-
         $this->handleNext($context, $engine);
 
     }
@@ -151,8 +143,7 @@ class ProcessNodeContainer
 
     private $name;
 
-    private $preHandleHooks = [];
-    private $postHandleHooks=[];
+    private $hook = null;
 
 
 }

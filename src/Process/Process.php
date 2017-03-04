@@ -36,14 +36,7 @@ class Process
     public function hasNode($name){
         return array_key_exists($name, $this->nodes);
     }
-    public function run(ProcessEngine $engine){
-        foreach ($this->nodes as $node){
-            if($node instanceof BeginEvent){
-                $engine->pushTask($node);
-            }
-        }
-        $engine->run();
-    }
+
     /**
      * @var ProcessNodeContainer[]
      */

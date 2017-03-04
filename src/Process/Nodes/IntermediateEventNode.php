@@ -8,7 +8,7 @@
 
 namespace EzBpm\Process\Nodes;
 
-class EventNode extends ProcessNodeContainer
+class IntermediateEventNode extends ProcessNodeContainer
 {
 
 }
