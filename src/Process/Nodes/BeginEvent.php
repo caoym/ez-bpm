@@ -13,12 +13,8 @@ use EzBpm\Process\Traits\NoInput;
 use EzBpm\Process\Traits\SingleOutput;
 
 
-class BeginEvent extends ProcessNodeContainer
+class BeginEvent extends ProcessNode
 {
-    public function __construct($nodeName){
-        parent::__construct($nodeName, NullNode::class);
-    }
-
     use NoInput;
     use SingleOutput;
 }

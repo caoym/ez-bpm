@@ -16,7 +16,7 @@ class Listener extends IntermediateEventNode
 {
     public function __construct($nodeName, $event){
         $this->event = $event;
-        parent::__construct($nodeName, NullNode::class);
+        parent::__construct($nodeName);
     }
 
     public function handle(ProcessContext $context, ProcessEngine $engine){

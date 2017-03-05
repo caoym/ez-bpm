@@ -1,6 +1,6 @@
 <?php
 namespace EzBpm\Process\Traits;
-use \EzBpm\Process\Nodes\ProcessNodeContainer;
+use \EzBpm\Process\Nodes\ConnectedAble;
 use \EzBpm\Exceptions\ProcessDefineException;
 use \EzBpm\Utils\Verify;
 
@@ -11,7 +11,12 @@ use \EzBpm\Utils\Verify;
  * Time: 下午7:11
  */
 trait NoInput{
-    public function preConnect(ProcessNodeContainer $from)
+    public function preConnect(ConnectedAble $from)
+    {
+        Verify::fail(new ProcessDefineException("can not connect a ".get_class($this)));
+    }
+
+    public function postConnect(ConnectedAble $from)
     {
         Verify::fail(new ProcessDefineException("can not connect a ".get_class($this)));
     }

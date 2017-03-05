@@ -2,7 +2,7 @@
 
 namespace EzBpm\Process\Traits;
 
-use \EzBpm\Process\Nodes\ProcessNodeContainer;
+use \EzBpm\Process\Nodes\ConnectedAble;
 use \EzBpm\Exceptions\ProcessDefineException;
 use \EzBpm\Utils\Verify;
 /**
@@ -13,7 +13,7 @@ use \EzBpm\Utils\Verify;
  */
 trait NoOutput{
 
-    public function connectTo(ProcessNodeContainer $next)
+    public function connectTo(ConnectedAble $next)
     {
         Verify::fail(new ProcessDefineException("can not connect from a ".get_class($this)));
     }

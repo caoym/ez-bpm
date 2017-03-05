@@ -10,13 +10,15 @@ namespace EzBpm\Process\Nodes;
 
 
 use EzBpm\Exceptions\ProcessDefineException;
+use EzBpm\Process\ProcessContext;
+use EzBpm\Process\ProcessEngine;
 use EzBpm\Process\Traits\SingleInput;
 use EzBpm\Utils\SerializableFunc;
 use EzBpm\Utils\Verify;
 
 class EventBasedGateway extends Gateway
 {
-    public function connectTo(ProcessNodeContainer $next){
+    public function connectTo(ConnectedAble $next){
         //只允许连接事件节点
         $next instanceof IntermediateEventNode or Verify::fail(
             new ProcessDefineException(
@@ -26,16 +28,16 @@ class EventBasedGateway extends Gateway
         parent::connectTo($next);
 
         //set hook
-        $next->setPreHandleHook(new SerializableFunc([$this, 'hookPostHandle'], $next));
+        $next->setHook(new SerializableFunc([$this, 'hookHandle']));
 
     }
 
-    public function hookPostHandle(ProcessNodeContainer $hookedNode,
+    public function hookHandle(ProcessContext $context,
                                    ProcessEngine $engine,
-                                   ProcessContext $context,
-                                   SerializableFunc $next
+                                   ProcessTaskContainer $hookedNode,
+                                   callable $next
                                     ){
-        //一旦一个事件触发, 关闭其他链路
+        //一旦一个事件触发, 关闭其他链路上的token
         $token = $context->getToken()->getParent();
         foreach ($token->getChildren() as $child){
             if($child !== $context->getToken()){
@@ -45,12 +47,15 @@ class EventBasedGateway extends Gateway
         $next();
     }
 
-    public function handleNext(ProcessEngine $engine, ProcessContext $context)
+    public function dispatchNext(ProcessContext $context, ProcessEngine $engine)
     {
         //call next nodes
+        $token = $engine->createToken($context->getToken());
+        $context->setToken($token);
         foreach ($this->outputs as $output){
             $newContext = $engine->createContext($context);
-            $engine->pushTask(new SerializableFunc([$output, 'handle'], $newContext));
+            $newContext->setToken($engine->createToken($token));
+            $engine->pushTask($output->getName(), 'handle', $newContext);
         }
     }
 

@@ -2,27 +2,121 @@
 /**
  * Created by PhpStorm.
  * User: caoyangmin
- * Date: 2017/2/22
- * Time: 下午6:31
+ * Date: 2017/3/5
+ * Time: 下午3:15
  */
 
 namespace EzBpm\Process\Nodes;
 
 
 use EzBpm\Process\ProcessContext;
+use EzBpm\Process\ProcessEngine;
 
-interface ProcessNode
+class ProcessNode implements ConnectedAble
 {
-    public function handle(ProcessContext $context);
+    /**
+     * ProcessTaskContainer constructor.
+     * @param string $nodeName node name
+     * @param string $nodeClass class name of the node
+     */
+    public function __construct($nodeName){
+        $this->nodeName = $nodeName;
+    }
+
+    public function preConnect(ConnectedAble $from){
+
+    }
+
+    public function postConnect(ConnectedAble $from){
+        $this->inputs[] = $from;
+    }
 
     /**
-     * 判断是否需要对此节点进行持久化
-     *
-     * 不进行持久化, 如果过程异常结束, 则无法记录此节点是否已经执行, 过程重启后, 将从最后一个持久化的节点开始执行;但开启持久化会降低系
-     * 统吞吐量。
-     *
-     * 建议幂等的(允许重试的)接口不开启, 而只对不幂等的接口开启。
-     * @return bool
+     * @return ConnectedAble[]
      */
-    public function needPersistence();
+    public function getInputs()
+    {
+        return $this->inputs;
+    }
+
+    /**
+     * @return ConnectedAble[]
+     */
+    public function getOutputs()
+    {
+        return $this->outputs;
+    }
+
+    /**
+     * @param SerializableFunc $hook
+     * function(ProcessContext $context, ProcessEngine $engine, ProcessTaskContainer $node, callable $next)
+     *
+     */
+    public function setHook(SerializableFunc $hook){
+        $this->hook = $hook;
+    }
+    public function getHook(){
+        return $this->hook;
+    }
+
+    public function connectTo(ConnectedAble $next){
+        $next->preConnect($this);
+        $this->outputs[] = $next;
+        $next->postConnect($this);
+    }
+
+    public function handle(ProcessContext $context, ProcessEngine $engine){
+        if($this->hook){
+            $this->hook($this, $context, $engine, function()use($context, $engine){
+                $this->handleImpl($context, $engine);
+            });
+        }else{
+            $this->handleImpl($context, $engine);
+        }
+    }
+    private function handleImpl(ProcessContext $context, ProcessEngine $engine){
+        // init exceptionTo handler
+        $this->dispatchInternal($context, $engine);
+        $this->dispatchNext($context, $engine);
+
+    }
+
+    protected function dispatchInternal(ProcessContext $context, ProcessEngine $engine){
+
+    }
+
+    protected function dispatchNext(ProcessContext $context, ProcessEngine $engine){
+        //call next nodes
+        foreach ($this->outputs as $nextNode){
+            $engine->pushTask($nextNode->getName(), 'handle', $context);
+        }
+    }
+    /**
+     * @return string
+     */
+    public function getName(){
+        return $this->nodeName;
+    }
+    /**
+     * @param string $nodeName
+     */
+    public function setName($nodeName)
+    {
+        $this->nodeName = $nodeName;
+    }
+    /**
+     * from nodes
+     * @var ConnectedAble[]
+     */
+    protected $inputs = [];
+    /**
+     * @var ConnectedAble[]
+     */
+    protected $outputs=[];
+
+    private $nodeName;
+    /**
+     * @var callable
+     */
+    private $hook = null;
 }

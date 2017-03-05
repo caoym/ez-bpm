@@ -20,7 +20,7 @@ class Timer extends IntermediateEventNode
 
     public function __construct($nodeName, $second){
         $this->second = $second;
-        parent::__construct($nodeName, NullNode::class);
+        parent::__construct($nodeName);
     }
 
     public function handle(ProcessContext $context, ProcessEngine $engine){

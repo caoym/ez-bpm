@@ -2,7 +2,7 @@
 
 namespace EzBpm\Process\Traits;
 
-use \EzBpm\Process\Nodes\ProcessNodeContainer;
+use \EzBpm\Process\Nodes\ConnectedAble;
 use \EzBpm\Exceptions\ProcessDefineException;
 use \EzBpm\Utils\Verify;
 
@@ -13,9 +13,10 @@ use \EzBpm\Utils\Verify;
  * Time: 下午7:11
  */
 trait SingleInput{
-    public function preConnect(ProcessNodeContainer $from)
+    public function preConnect(ConnectedAble $from)
     {
-        count($this->inputs) == 0 or Verify::fail(new ProcessDefineException("connect {$from->getName()}->{$this->getName()} failed, an ".get_class($this)." can only have ONE input"));
+        count($this->getInputs()) == 0
+            or Verify::fail(new ProcessDefineException("connect {$from->getName()} to {$this->getName()} failed, an ".get_class($this)." can only have ONE input"));
         parent::preConnect($from);
     }
 }

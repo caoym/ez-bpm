@@ -9,18 +9,10 @@
 namespace EzBpm\Process\Nodes;
 
 
-class Gateway extends ProcessNodeContainer
-{
-    public function __construct()
-    {
-        parent::__construct('', NullNode::class);
-    }
+use EzBpm\Process\ProcessContext;
+use EzBpm\Process\ProcessEngine;
 
-    /**
-     * @param string $nodeName
-     */
-    public function setNodeName($nodeName)
-    {
-        $this->nodeName = $nodeName;
-    }
+class Gateway extends ProcessNode
+{
+
 }

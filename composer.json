@@ -13,7 +13,8 @@
     },
     "autoload": {
         "psr-4": {
-            "EzBpm\\": "src/"
+            "EzBpm\\": "src/",
+            "EzBpm\\Tests\\": "tests/"
         },
         "files": [
 

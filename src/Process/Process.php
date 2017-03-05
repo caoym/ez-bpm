@@ -1,8 +1,9 @@
 <?php
 namespace EzBpm\Process;
-use EzBpm\Process\Nodes\Activity;
+use EzBpm\Exceptions\ProcessDefineException;
 use EzBpm\Process\Nodes\BeginEvent;
-use EzBpm\Process\Nodes\ProcessNodeContainer;
+use EzBpm\Process\Nodes\ConnectedAble;
+use EzBpm\Process\Nodes\ProcessTaskContainer;
 use EzBpm\Utils\SerializableFunc;
 use EzBpm\Utils\Verify;
 
@@ -14,23 +15,28 @@ use EzBpm\Utils\Verify;
  */
 class Process
 {
-    public function addNode($name , $class){
-        !array_key_exists($name, $this->nodes) or Verify::fail(new \InvalidArgumentException("node $name exist"));
-        $this->nodes[$name] = new Activity($name, $class);
-    }
-    public function addNodeInstance($name, ProcessNodeContainer $node){
-        !array_key_exists($name, $this->nodes) or Verify::fail(new \InvalidArgumentException("node $name exist"));
+
+    public function addNodeInstance($name, ConnectedAble $node){
+        !array_key_exists($name, $this->nodes)
+            or Verify::fail(new ProcessDefineException("node $name already exist"));
         $node->setName($name);
         $this->nodes[$name] = $node;
         return $node;
     }
 
     public function connect($from, $to){
-        $this->getNode($from)->connectTo($this->getNode($to));
+        if(is_string($from)){
+            $from = $this->getNode($from);
+        }
+        if(is_string($to)){
+            $to = $this->getNode($to);
+        }
+        $from->connectTo($to);
     }
 
     public function getNode($name){
-        array_key_exists($name, $this->nodes) or Verify::fail("node $name not found");
+        array_key_exists($name, $this->nodes)
+            or Verify::fail(new ProcessDefineException("node $name not found"));
         return $this->nodes[$name];
     }
     public function hasNode($name){
@@ -38,7 +44,7 @@ class Process
     }
 
     /**
-     * @var ProcessNodeContainer[]
+     * @var ConnectedAble[]
      */
     private $nodes = [];
 }

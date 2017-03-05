@@ -1,14 +1,21 @@
 <?php
+namespace EzBpm\Tests;
 use \EzBpm\Builder\ProcessBuilder;
+use EzBpm\Process\Nodes\ProcessTaskInterface;
 use \EzBpm\Process\Process;
+use \EzBpm\Process\Nodes\ProcessNode;
+use \EzBpm\Process\ProcessContext;
+use EzBpm\Process\ProcessEngine;
+
 require __DIR__.'/../vendor/autoload.php';
 ini_set('date.timezone','Asia/Shanghai');
 
-class TestTask implements \EzBpm\Process\Nodes\ProcessNode{
 
-    public function handle(\EzBpm\Process\ProcessContext $context)
+class TestTask implements ProcessTaskInterface{
+
+    public function handle(ProcessContext $context)
     {
-        echo 'TestTask';
+
     }
 
     /**
@@ -25,26 +32,42 @@ class TestTask implements \EzBpm\Process\Nodes\ProcessNode{
         return true;
     }
 }
+
+
 /**
  * Created by PhpStorm.
  * User: caoyangmin
  * Date: 2017/2/21
  * Time: 下午11:31
  */
-class ProcessBuilderTest extends PHPUnit_Framework_TestCase
+class ProcessBuilderTest extends \PHPUnit_Framework_TestCase
 {
     public function testBuilder(){
 
-        $engine = new \EzBpm\Process\ProcessEngine();
         $process = new Process();
         $builder = new ProcessBuilder($process);
 
-        $builder
-                ->begin
-                ->timer('timer', 5)
-                ->activity('a', TestTask::class)
-                ->end;
-        $process->run($engine);
+        $builder->begin
+                        -> xFork('xf')
+                                -> otherwise()
+                                        -> task('task1', TestTask::class) -> xJoin('xj')->end;
+
+
+        $builder        -> xFork('xf')
+                                -> when(
+                                    function(ProcessContext $context){
+                                        return true;
+                                    })
+                                        -> task('task2', TestTask::class) -> xJoin('xj');
+
+
+
+
+
+
+
+        $engine = new ProcessEngine($process);
+        $engine->startNewProcess();
 
     }
 }

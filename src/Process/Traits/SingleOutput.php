@@ -2,7 +2,7 @@
 
 namespace EzBpm\Process\Traits;
 
-use \EzBpm\Process\Nodes\ProcessNodeContainer;
+use \EzBpm\Process\Nodes\ConnectedAble;
 use \EzBpm\Exceptions\ProcessDefineException;
 use \EzBpm\Utils\Verify;
 /**
@@ -13,9 +13,9 @@ use \EzBpm\Utils\Verify;
  */
 trait SingleOutput{
 
-    public function connectTo(ProcessNodeContainer $next)
+    public function connectTo(ConnectedAble $next)
     {
-        count($this->outputs) == 0 or Verify::fail(new ProcessDefineException("connect {$this->getName()}->{$next->getName()} failed, an ".get_class($this)." can only have ONE output"));
+        count($this->getOutputs()) == 0 or Verify::fail(new ProcessDefineException("connect {$this->getName()} to {$next->getName()} failed, an ".get_class($this)." can only have ONE output"));
         parent::connectTo($next);
     }
 }

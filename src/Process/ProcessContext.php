@@ -15,25 +15,41 @@ class ProcessContext extends \ArrayObject
 {
 
     /**
-     * @return Token
+     * ProcessContext constructor.
+     * @param ProcessContext $parent
+     */
+    public function __construct(self $parent = null)
+    {
+        parent::__construct();
+        if($parent){
+            foreach ($parent as $k=>$v){
+                $this[$k] = $v;
+            }
+            $this->setToken($parent->getToken());
+        }
+
+    }
+
+    /**
+     * @return ProcessToken
      */
     public function getToken()
     {
         return $this->token;
     }
     /**
-     * @param Token $token
+     * @param ProcessToken $token
      */
-    public function setToken(Token $token)
+    public function setToken(ProcessToken $token=null)
     {
         $this->token = $token;
     }
     /**
-     * @param ProcessNodeContainer $fromNode
+     * @param ProcessTaskContainer $fromNode
      * @param \Exception $e
      * @return void
      */
-    public function setLastException(ProcessNodeContainer $fromNode, \Exception $e)
+    public function setLastException(ProcessTaskContainer $fromNode, \Exception $e)
     {
         $this->lastException->fromNode = $fromNode->getName();
         $this->lastException->code = $e->getCode();
@@ -62,7 +78,7 @@ class ProcessContext extends \ArrayObject
     private $parentId;
 
     /**
-     * @var Token
+     * @var ProcessToken
      */
     private $token;
 
