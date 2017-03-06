@@ -21,7 +21,7 @@ $builder
 $builder 
     ->eFork1
     ->timer(null, 3600, '支付超时')
-    ->xGetway1
+    ->xJoin1
     ->end
     
 //执行流程
