@@ -11,15 +11,15 @@ $builder = new ProcessBuilder($process);
 //定义流程
 $builder
     ->begin
-    ->activity(null, CreateOrderTask::class, '创建订单')
-    ->eG('eventGetway1', '事件网关')
-    ->receiver(null, 'paid'， '等待支付')
-    ->activity(null, ShipTask::cass, '发货');
-    ->xG('xGetway1', '排他网关')
+    ->task(null, CreateOrderTask::class, '创建订单')
+    ->eFork('eFork1', '事件网关')
+    ->listener(null, 'paid'， '等待支付')
+    ->task(null, ShipTask::cass, '发货');
+    ->xJoin('xJoin1', '排他网关')
     ->end;
     
 $builder 
-    ->eventGetway1
+    ->eFork1
     ->timer(null, 3600, '支付超时')
     ->xGetway1
     ->end
