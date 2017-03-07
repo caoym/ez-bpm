@@ -14,7 +14,7 @@ $builder
     ->task(null, CreateOrderTask::class, '创建订单')
     ->eFork('eFork1', '事件网关')
     ->listener(null, 'paid'， '等待支付')
-    ->task(null, ShipTask::cass, '发货');
+    ->task(null, ShipTask::cass, '发货')
     ->xJoin('xJoin1', '排他网关')
     ->end;
     
