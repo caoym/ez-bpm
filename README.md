@@ -21,8 +21,9 @@ $builder
 $builder 
     ->eFork1
     ->timer(null, 3600, '支付超时')
-    ->xJoin1
-    ->end
+    ->task(null, CloseOrderTask::class, '关闭订单')
+    ->xJoin1
+   
     
 //执行流程
 $process->run($engine);
