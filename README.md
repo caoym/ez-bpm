@@ -11,18 +11,18 @@ $builder = new ProcessBuilder($process);
 //定义流程
 $builder
     ->begin
-    ->task(null, CreateOrderTask::class, '创建订单')
-    ->eFork('eFork1', '事件网关')
-    ->listener(null, 'paid'， '等待支付')
-    ->task(null, ShipTask::cass, '发货')
-    ->xJoin('xJoin1', '排他网关')
+        ->task(null, CreateOrderTask::class, '创建订单')
+        ->eFork('eFork1', '事件网关')
+            ->listener(null, 'paid'， '等待支付')
+            ->task(null, ShipTask::cass, '发货')
+        ->xJoin('xJoin1', '排他网关')
     ->end;
     
 $builder 
-    ->eFork1
-    ->timer(null, 3600, '支付超时')
-    ->task(null, CloseOrderTask::class, '关闭订单')
-    ->xJoin1
+        ->eFork1
+            ->timer(null, 3600, '支付超时')
+            ->task(null, CloseOrderTask::class, '关闭订单')
+        ->xJoin1
    
     
 //执行流程
