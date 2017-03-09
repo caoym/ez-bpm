@@ -60,12 +60,6 @@ class ProcessBuilderTest extends \PHPUnit_Framework_TestCase
                                     })
                                         -> task('task2', TestTask::class) -> xJoin('xj');
 
-
-
-
-
-
-
         $engine = new ProcessEngine($process);
         $engine->startNewProcess();
 

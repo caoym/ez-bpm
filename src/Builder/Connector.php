@@ -44,7 +44,7 @@ class Connector
             $this->currentNode = $process->getNode($currentNode);
         }else{
             $currentNode instanceof ConnectedAble
-                or Verify::fail(new \InvalidArgumentException('$currentNode not a ProcessTaskContainer'));
+                or Verify::fail(new \InvalidArgumentException('$currentNode not a ConnectedAble'));
             $this->currentNode = $currentNode;
         }
     }
@@ -64,8 +64,8 @@ class Connector
             }else{
                 Verify::fail(new ProcessDefineException("attempt to connect to non exist node $next"));
             }
-            $this->process->connect($this->currentNode, $node);
         }
+        $this->process->connect($this->currentNode, $node);
         $this->currentNode = $node;
         return $this;
     }
@@ -84,8 +84,8 @@ class Connector
                 or Verify::fail(new ProcessDefineException("node $name exist but not a ProcessTaskContainer"));
         }else{
             $node = $this->process->addNodeInstance($name, new ProcessTaskContainer($name, $taskClass));
-            $this->process->connect($this->currentNode, $node);
         }
+        $this->process->connect($this->currentNode, $node);
         $this->currentNode = $node;
         return $this;
     }
@@ -106,8 +106,8 @@ class Connector
         }else{
             $second !== null or Verify::fail(new ProcessDefineException("param 'second' of timer $name not set"));
             $node = $this->process->addNodeInstance($name, new Timer($name, $second));
-            $this->process->connect($this->currentNode, $node);
         }
+        $this->process->connect($this->currentNode, $node);
         $this->currentNode = $node;
         return $this;
     }
@@ -128,8 +128,8 @@ class Connector
         }else{
             $event !== null or Verify::fail(new ProcessDefineException("param 'event' of listener $name not set"));
             $node = $this->process->addNodeInstance($name, new Listener($name, $event));
-            $this->process->connect($this->currentNode, $node);
         }
+        $this->process->connect($this->currentNode, $node);
         $this->currentNode = $node;
         return $this;
     }
@@ -213,8 +213,8 @@ class Connector
             or Verify::fail(new ProcessDefineException("node $name exist but not a $class"));
         }else{
             $node = $this->process->addNodeInstance($name, new $class($name));
-            $this->process->connect($this->currentNode, $name);
         }
+        $this->process->connect($this->currentNode, $name);
         $this->currentNode = $node;
     }
     /**
