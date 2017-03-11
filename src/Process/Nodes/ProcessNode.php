@@ -11,6 +11,7 @@ namespace EzBpm\Process\Nodes;
 
 use EzBpm\Process\ProcessContext;
 use EzBpm\Process\ProcessEngine;
+use EzBpm\Utils\SerializableFunc;
 
 class ProcessNode implements ConnectedAble
 {

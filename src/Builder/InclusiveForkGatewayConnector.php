@@ -28,7 +28,7 @@ class InclusiveForkGatewayConnector
     /**
      * @param callable $condition
      * @param string $comment
-     * @return TaskConnector
+     * @return Connector
      */
     public function when(callable $condition, $comment=''){
         $cond = $this->gateway->addCondition($condition, $comment);

@@ -44,6 +44,13 @@ class Process
     }
 
     /**
+     * @return Nodes\ConnectedAble[]
+     */
+    public function getNodes()
+    {
+        return $this->nodes;
+    }
+    /**
      * @var ConnectedAble[]
      */
     private $nodes = [];

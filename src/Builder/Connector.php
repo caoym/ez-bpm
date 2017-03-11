@@ -51,7 +51,7 @@ class Connector
 
     /**
      * @param $next
-     * @return TaskConnector
+     * @return Connector
      */
     public function __get($next)
     {
@@ -73,7 +73,7 @@ class Connector
     /**
      * @param string $name
      * @param string $taskClass
-     * @return TaskConnector
+     * @return Connector
      */
     public function task($name, $taskClass=null, $comment='')
     {
@@ -139,6 +139,7 @@ class Connector
      * @param string $name
      * @param callable $elseif
      * @param string $comment
+     * @return ExclusiveForkGatewayConnector
      */
     public function xFork($name, $comment = ''){
         $this->connect($name, ExclusiveForkGateway::class);
@@ -150,6 +151,7 @@ class Connector
      * @param string $name
      * @param callable $elseif
      * @param string $comment
+     * @return Connector
      */
     public function xJoin($name, $comment = ''){
         $this->connect($name, ExclusiveJoinGateway::class);
@@ -161,6 +163,7 @@ class Connector
      * @param string $name
      * @param callable $if
      * @param string $comment
+     * @return InclusiveForkGatewayConnector
      */
     public function oFork($name, $comment = ''){
         $this->connect($name, InclusiveForkGateway::class);
@@ -181,6 +184,7 @@ class Connector
     /**
      * Parallel Gateway
      * @param string $name
+     * @return Connector
      */
     public function pFork($name, $comment=''){
         $this->connect($name, ParallelForkGateway::class);
@@ -190,6 +194,7 @@ class Connector
     /**
      * Parallel Gateway
      * @param string $name
+     * @return Connector
      */
     public function pJoin($name, $comment=''){
         $this->connect($name, ParallelJoinGateway::class);
@@ -199,6 +204,7 @@ class Connector
     /**
      * Event-based Gateway
      * @param string $name
+     * @return EventBasedForkGatewayConnector
      */
     public function eFork($name, $comment=''){
         $this->connect($name, EventBasedGateway::class);

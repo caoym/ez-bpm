@@ -1,5 +1,6 @@
 <?php
 namespace EzBpm\Tests;
+use EzBpm\Builder\GraphMaker;
 use \EzBpm\Builder\ProcessBuilder;
 use EzBpm\Process\Nodes\ProcessTaskInterface;
 use \EzBpm\Process\Process;
@@ -47,21 +48,33 @@ class ProcessBuilderTest extends \PHPUnit_Framework_TestCase
         $process = new Process();
         $builder = new ProcessBuilder($process);
 
+//        $builder->begin
+//                        -> xFork('xf')
+//                                -> otherwise()
+//                                        -> task('task1', TestTask::class) -> xJoin('xj')->end;
+//
+//
+//        $builder        -> xFork('xf')
+//                                -> when(
+//                                    function(ProcessContext $context){
+//                                        return true;
+//                                    })
+//                                        -> task('task2', TestTask::class) -> xJoin('xj');
+//        $engine = new ProcessEngine($process);
+//        $engine->startNewProcess();
+
         $builder->begin
-                        -> xFork('xf')
-                                -> otherwise()
-                                        -> task('task1', TestTask::class) -> xJoin('xj')->end;
+                    ->pFork('pf')->task('t1',TestTask::class)->pJoin('pj')
+                        ->eFork('ef')->timer('timer1',5)->xJoin('xj2')
+                            ->oFork('of1')->when(function (){})->oJoin('oj1')->end;
 
+        $builder->pf->task('t2', TestTask::class)->pj;
 
-        $builder        -> xFork('xf')
-                                -> when(
-                                    function(ProcessContext $context){
-                                        return true;
-                                    })
-                                        -> task('task2', TestTask::class) -> xJoin('xj');
+        $builder->ef->listener('l1','message')->xj2;
 
-        $engine = new ProcessEngine($process);
-        $engine->startNewProcess();
+        $builder->oFork('of1')->when(function (){})->oj1;
 
+        $graph = new GraphMaker($process);
+        echo $graph;
     }
 }

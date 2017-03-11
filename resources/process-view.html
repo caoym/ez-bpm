@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ez-bpm Process View</title>
+    <link rel="stylesheet" href="http://knsv.github.io/mermaid/fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://knsv.github.io/mermaid/stylesheets/mermaid.forest.css">
+    <!--<link rel="stylesheet" href="http://knsv.github.io/mermaid/css/mermaid.css">-->
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>-->
+    <script src="http://knsv.github.io/mermaid/javascripts/lib/mermaid.js"></script>
+</head>
+<body>
+
+
+<!--<textarea id="editor"-->
+          <!--rows="6" cols="60">Type **svgCode** here.</textarea>-->
+
+<div id="preview" class="mermaid">
+
+    graph LR
+        begin_0((begin))
+        pf_0{+}
+        t1_0[t1]
+        pj_0{+}
+        ef_0{fa:fa-empire}
+        timer1_0(("fa:fa-clock-o 3600s"))
+        xj2_0{X}
+        of1_0{O}
+        oj1_0{O}
+        end_0((end))
+        t2_0[t2]
+        l1_0((fa:fa-envelope-o paid1))
+        begin_0-->pf_0
+        pf_0-->t1_0
+        t1_0-->pj_0
+        pj_0-->ef_0
+        ef_0-->timer1_0
+        timer1_0-->xj2_0
+        xj2_0-->of1_0
+        of1_0-->oj1_0
+        oj1_0-->end_0
+        ef_0-->l1_0
+        l1_0-->xj2_0
+        pf_0-->t2_0
+        t2_0-->pj_0
+
+</div>
+
+<script>
+    mermaidAPI.initialize({
+        startOnLoad:true
+    });
+
+//    $(function(){
+//        var element = document.querySelector("#preview");
+//        var insertSvg = function(svgCode, bindFunctions){
+//            element.innerHTML = svgCode;
+//        };
+//
+//        $("#editor").change(function(){
+//            var graphDefinition = $("#editor").val();
+//            alert(graphDefinition);
+//            var graph = mermaidAPI.render(
+//                    'preview',
+//                    graphDefinition,//$("#editor").val(),
+//                    insertSvg);
+//            console.log(graph);
+//        });
+//
+//    });
+
+</script>
+</body>
+</html>

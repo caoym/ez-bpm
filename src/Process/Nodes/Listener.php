@@ -11,6 +11,8 @@ namespace EzBpm\Process\Nodes;
 
 use EzBpm\Process\ProcessContext;
 use EzBpm\Process\ProcessEngine;
+use EzBpm\Process\Traits\SingleInput;
+use EzBpm\Process\Traits\SingleOutput;
 
 class Listener extends IntermediateEventNode
 {
